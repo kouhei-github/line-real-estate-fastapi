@@ -19,3 +19,5 @@ class UserOut(BaseModel):
 class UserAuth(BaseModel):
     email: str
     password: str
+    line_id: str
+    image_url: str
