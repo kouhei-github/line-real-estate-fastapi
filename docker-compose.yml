@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  python:
+    image: line-real-estate-image
+    container_name: line-real-estate-container
+    build:
+      context: .
+      dockerfile: ./container/python/Dockerfile
+    tty: true
+    working_dir: /user/src/python
+    volumes:
+      - ./src:/user/src/python
+      - ./container/python/requirements.txt:/tmp/requirements.txt
+      - ./container/python/lib-update.sh:/tmp/lib-update.sh
+      - ./container/python/entrypoint.sh:/tmp/entrypoint.sh
+    env_file:
+      - ".env"
+    ports:
+      - "8000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh /tmp/entrypoint.sh
+
+  db:
+    image: mysql:8
+    container_name: line-real-estate-database # phpMyAdminサービスのPMA_HOSTSに設定する
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${USER_PASS}
+      TZ: 'Asia/Tokyo'
+      LC_ALL: 'ja_JP.UTF-8'
+      LANG: "ja_JP.UTF-8"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    env_file:
+      - .env
+    volumes:
+      - ./container/db/data:/var/lib/mysql
+      - ./container/db/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - ${PORT}:3306
+    expose:
+      - ${PORT}
