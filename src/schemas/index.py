@@ -1,7 +1,7 @@
 from .jwt_token import Token as TokenSchema
 from .jwt_token import TokenData as TokenDataSchema
 from .jwt_token import UserOut
-from .jwt_token import UserAuth
+from .jwt_token import UserAuth, CompanySchema
 from .user import ShowUser as ShowUserSchema
 from .line.message.text import MessageTextWebHook
 from .line.message.image import MessageImageWebHook
@@ -19,3 +19,5 @@ from .line.beacon import BeaconWebHook
 from .line.acount_link import AccountLinkWebHook
 from .line.device.link import DeviceLinkWebHook
 from .line.device.unlink import DeviceUnLinkWebHook
+from .company import CompanySchema
+from .message import MessageSchema, MessageTextSchema

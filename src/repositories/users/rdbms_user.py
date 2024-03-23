@@ -1,22 +1,20 @@
 from .abstruct import AbstractUserDatabaseNotify
-from models.index import User
+from models.index import User, Company
 from config.index import get_db
 from sqlalchemy.orm import Session
 from schemas.index import UserOut, UserAuth
 from services.jwt_token import create_access_token, verify_password, create_refresh_token, get_hashed_password
 
-class UserRDBMS(AbstractUserDatabaseNotify):
+class UserCompanyRDBMS(AbstractUserDatabaseNotify):
     user = User
 
     def __init__(self):
         self.db: Session = next(get_db())
 
-    def save(self, data: UserAuth) -> UserOut:
-        user = User()
-        user.email = data.email
-        user.password = get_hashed_password(data.password)
-        user.line_user_id = data.line_id
-        user.picture_url = data.image_url
+    def save(self, data: UserAuth, company: Company) -> UserOut:
+        user = User(name=data.name, line_user_id=data.line_id, picture_url=data.image_url)
+
+        user.companies.append(company)
         self.db.add(user)
         self.db.commit()
         response = UserOut(
@@ -31,4 +29,6 @@ class UserRDBMS(AbstractUserDatabaseNotify):
         return response
 
     def find_by_line_id(self, line_id: str) -> User:
-        return self.db.query(User).filter(User.line_user_id == line_id).first()
+        record = self.db.query(User).filter(User.line_user_id == line_id).first()
+        self.db.close()
+        return record

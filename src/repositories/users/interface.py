@@ -1,9 +1,9 @@
 from injector import inject, Module
-from .rdbms_user import UserRDBMS
+from .rdbms_user import UserCompanyRDBMS
 
 from .abstruct import AbstractUserDatabaseNotify
-from schemas.index import UserAuth, UserOut
-from models.index import User
+from schemas.index import UserAuth, UserOut, CompanySchema
+from models.index import User, Company
 
 class UserRepository(Module):
     @inject
@@ -12,19 +12,20 @@ class UserRepository(Module):
             raise Exception("notify is not abstractTire.")
         self.repository = repository
 
-    def register(self, line_id: str, email: str, password: str, url: str) -> UserOut:
+
+    def register(self, line_id: str, name: str, url: str, company: Company) -> UserOut:
         print("MySQlに応募者の情報を登録しました")
         user = UserAuth.parse_obj({
             "line_id": line_id,
-            "email": email,
-            "password": password,
-            "image_url": url
+            "name": name,
+            "image_url": url,
+            "follow": True,
         })
-        return self.repository.save(user)
+        return self.repository.save(user, company)
 
     def find_by_line_user_id(self, line_id: str) -> User:
         return self.repository.find_by_line_id(line_id)
 class UserRepositoryModule(Module):
     def configure(self, binder):
         # binder.bind(AbstractNotify, to=SlackNotification)
-        binder.bind(AbstractUserDatabaseNotify, to=UserRDBMS)
+        binder.bind(AbstractUserDatabaseNotify, to=UserCompanyRDBMS)

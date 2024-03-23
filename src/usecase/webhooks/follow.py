@@ -1,15 +1,25 @@
 import uuid, os
 from schemas.index import FollowWebHook
 from repositories.users.interface import UserRepositoryModule, UserRepository
+from repositories.company.interface import CompanyRepositoryModule, CompanyRepository
+from injector import Injector
 from injector import Injector
 from linebot import LineBotApi
 
 async def follow_use_case(body: FollowWebHook) -> str:
     print(body)
 
-    # line sdkでuserのメールアドレスを取得する
-    bot = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+    print(f"body.destination: {body.destination}")
 
+    # 会社
+    company_injector = Injector([CompanyRepositoryModule()])
+    company_repository = company_injector.get(CompanyRepository)
+    company = company_repository.find_by_line_user_id(body.destination)
+
+    # line sdk
+    bot = LineBotApi(company.channel_access_token)
+
+    # user
     profile = bot.get_profile(body.events[0].source.userId)
     injector = Injector([UserRepositoryModule()])
     _injection = injector.get(UserRepository)
@@ -18,8 +28,8 @@ async def follow_use_case(body: FollowWebHook) -> str:
     if user is None:
         res = _injection.register(
             profile.user_id,
-            str(uuid.uuid4()),
-            "nH%n&CaninHn%4AC&A47inHC",
-            profile.picture_url
+            profile.display_name,
+            profile.picture_url,
+            company
         )
     return body.events[0].source.userId

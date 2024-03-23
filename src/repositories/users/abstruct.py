@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from models.index import User
+from models.index import User, Company
 from schemas.index import UserOut, UserAuth
 
 class AbstractUserDatabaseNotify(ABC):
     @abstractmethod
-    def save(self, data: UserAuth) -> UserOut:
+    def save(self, data: UserAuth, company: Company) -> UserOut:
         raise NotImplementedError()
 
     @abstractmethod

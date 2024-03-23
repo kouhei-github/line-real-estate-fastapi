@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from routes.index import (
     user,
     line,
+    company,
+    message,
 )
 
 from config.index import Base, engine
@@ -13,6 +15,7 @@ from config.index import Base, engine
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 
 # add Cors
 app.add_middleware(
@@ -25,4 +28,6 @@ app.add_middleware(
 
 app.include_router(user)
 app.include_router(line)
+app.include_router(company)
+app.include_router(message)
 # app.include_router(health_check)
