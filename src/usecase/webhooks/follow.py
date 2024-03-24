@@ -4,6 +4,7 @@ from repositories.company.interface import CompanyRepositoryModule, CompanyRepos
 from injector import Injector
 from services.line_bot.core import CoreLineBot
 from services.line_bot.message.text_message import TextMessage
+from services.line_bot.message.quick_reply_message import QuickReplyMessage
 
 async def follow_use_case(body: FollowWebHook) -> str:
     print(body)
@@ -35,4 +36,9 @@ async def follow_use_case(body: FollowWebHook) -> str:
     # メッセージの送信
     message = TextMessage(company.message)
     bot.send_message(body.events[0].source.userId, message)
+
+    question = f"{user.name}さんの性別を選択してください"
+    quick_reply = QuickReplyMessage(question, [{"label": "男性", "text": "男性"},{"label": "女性", "text": "女性"}])
+    bot.send_message(body.events[0].source.userId, quick_reply)
+
     return body.events[0].source.userId

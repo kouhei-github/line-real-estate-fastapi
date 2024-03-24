@@ -1,4 +1,3 @@
-from services.line_bot.core import CoreLineBot
 from linebot.models import TextSendMessage
 from services.line_bot.message.abstruct import AbstractLineMessage
 
