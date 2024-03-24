@@ -19,5 +19,5 @@ from .line.beacon import BeaconWebHook
 from .line.acount_link import AccountLinkWebHook
 from .line.device.link import DeviceLinkWebHook
 from .line.device.unlink import DeviceUnLinkWebHook
-from .company import CompanySchema
+from .company import CompanySchema, CompanyMessageSchema
 from .message import MessageSchema, MessageTextSchema

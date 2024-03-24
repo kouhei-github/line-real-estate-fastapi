@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from models.index import Company
-from schemas.index import CompanySchema
+from schemas.index import CompanySchema, CompanyMessageSchema
 
 class AbstractCompanyDatabase(ABC):
     @abstractmethod
@@ -12,7 +12,7 @@ class AbstractCompanyDatabase(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_by_line_id(self, line_id: str) -> Company:
+    def find_by_line_id(self, line_id: str) -> CompanyMessageSchema:
         raise NotImplementedError()
 
     @abstractmethod

@@ -13,7 +13,7 @@ class UserRepository(Module):
         self.repository = repository
 
 
-    def register(self, line_id: str, name: str, url: str, company: Company) -> UserOut:
+    def register(self, line_id: str, name: str, url: str, company_id: int) -> User:
         print("MySQlに応募者の情報を登録しました")
         user = UserAuth.parse_obj({
             "line_id": line_id,
@@ -21,7 +21,7 @@ class UserRepository(Module):
             "image_url": url,
             "follow": True,
         })
-        return self.repository.save(user, company)
+        return self.repository.save(user, company_id)
 
     def find_by_line_user_id(self, line_id: str) -> User:
         return self.repository.find_by_line_id(line_id)

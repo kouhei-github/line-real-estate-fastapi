@@ -1,10 +1,9 @@
-import uuid, os
 from schemas.index import FollowWebHook
 from repositories.users.interface import UserRepositoryModule, UserRepository
 from repositories.company.interface import CompanyRepositoryModule, CompanyRepository
 from injector import Injector
-from injector import Injector
-from linebot import LineBotApi
+from services.line_bot.core import CoreLineBot
+from services.line_bot.message.text_message import TextMessage
 
 async def follow_use_case(body: FollowWebHook) -> str:
     print(body)
@@ -17,7 +16,7 @@ async def follow_use_case(body: FollowWebHook) -> str:
     company = company_repository.find_by_line_user_id(body.destination)
 
     # line sdk
-    bot = LineBotApi(company.channel_access_token)
+    bot = CoreLineBot(company.channel_access_token)
 
     # user
     profile = bot.get_profile(body.events[0].source.userId)
@@ -26,10 +25,14 @@ async def follow_use_case(body: FollowWebHook) -> str:
     # 存在するか確認
     user = _injection.find_by_line_user_id(profile.user_id)
     if user is None:
-        res = _injection.register(
+        user = _injection.register(
             profile.user_id,
             profile.display_name,
             profile.picture_url,
-            company
+            company.id
         )
+
+    # メッセージの送信
+    message = TextMessage(company.message)
+    bot.send_message(body.events[0].source.userId, message)
     return body.events[0].source.userId

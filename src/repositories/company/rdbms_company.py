@@ -2,7 +2,7 @@ from .abstruct import AbstractCompanyDatabase
 from models.index import Company
 from config.index import get_db
 from sqlalchemy.orm import Session
-from schemas.index import CompanySchema
+from schemas.index import CompanySchema, CompanyMessageSchema
 
 class CompanyRDBMS(AbstractCompanyDatabase):
     def __init__(self):
@@ -28,12 +28,17 @@ class CompanyRDBMS(AbstractCompanyDatabase):
         self.db.refresh(company)
         return company
 
-    def find_by_line_id(self, line_id: str) -> Company:
-        record = self.db.query(Company).filter(Company.line_id == line_id).first()
-        self.db.close()
-        return record
+    def find_by_line_id(self, line_id: str) -> CompanyMessageSchema:
+        record: Company = self.db.query(Company).filter(Company.line_id == line_id).first()
+        schema = CompanyMessageSchema(
+            id=record.id,
+            name=record.name,
+            message=record.message.text,
+            channel_access_token=record.channel_access_token
+        )
+        return schema
+
 
     def find_by_id(self, id: int) -> Company:
         record = self.db.query(Company).get(id)
-        self.db.close()
         return record

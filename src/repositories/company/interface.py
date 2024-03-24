@@ -4,6 +4,7 @@ from .rdbms_company import CompanyRDBMS
 from .abstruct import AbstractCompanyDatabase
 from schemas.index import UserAuth, UserOut, CompanySchema
 from models.index import Company
+from schemas.index import CompanyMessageSchema
 
 class CompanyRepository(Module):
     @inject
@@ -26,7 +27,7 @@ class CompanyRepository(Module):
         print("MySQlに応募者の情報を登録しました")
         return self.repository.update_message(company_id, message_id)
 
-    def find_by_line_user_id(self, line_id: str) -> Company:
+    def find_by_line_user_id(self, line_id: str) -> CompanyMessageSchema:
         return self.repository.find_by_line_id(line_id)
 class CompanyRepositoryModule(Module):
     def configure(self, binder):

@@ -4,7 +4,7 @@ from schemas.index import UserOut, UserAuth
 
 class AbstractUserDatabaseNotify(ABC):
     @abstractmethod
-    def save(self, data: UserAuth, company: Company) -> UserOut:
+    def save(self, data: UserAuth, company_id: int) -> User:
         raise NotImplementedError()
 
     @abstractmethod
