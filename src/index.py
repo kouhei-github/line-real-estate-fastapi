@@ -5,6 +5,7 @@ from routes.index import (
     line,
     company,
     message,
+    question,
 )
 
 from config.index import Base, engine
@@ -30,4 +31,5 @@ app.include_router(user)
 app.include_router(line)
 app.include_router(company)
 app.include_router(message)
+app.include_router(question)
 # app.include_router(health_check)

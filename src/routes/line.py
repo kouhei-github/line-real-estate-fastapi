@@ -8,9 +8,10 @@ from usecase.webhooks.index import (
     follow_use_case,
     un_send_use_case,
     message_use_case,
+    postback_use_case,
 )
 from schemas.index import (
-    UnFollowWebHook, FollowWebHook, UnSendWebHook
+    UnFollowWebHook, FollowWebHook, UnSendWebHook, SimplePostBackLineWebhook
 )
 
 line = APIRouter(
@@ -32,6 +33,9 @@ async def create_user(data: Dict, db: Session = Depends(get_db)):
         case "unsend":
             body = UnSendWebHook.parse_obj(data)
             await un_send_use_case(body)
+        case "postback":
+            body = SimplePostBackLineWebhook.parse_obj(data)
+            await postback_use_case(body)
         case "message":
             await message_use_case(data)
     return {"status": 200}

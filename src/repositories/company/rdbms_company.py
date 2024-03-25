@@ -28,13 +28,16 @@ class CompanyRDBMS(AbstractCompanyDatabase):
         self.db.refresh(company)
         return company
 
-    def find_by_line_id(self, line_id: str) -> CompanyMessageSchema:
+    async def find_by_line_id(self, line_id: str) -> CompanyMessageSchema:
         record: Company = self.db.query(Company).filter(Company.line_id == line_id).first()
         schema = CompanyMessageSchema(
             id=record.id,
             name=record.name,
             message=record.message.text,
-            channel_access_token=record.channel_access_token
+            channel_access_token=record.channel_access_token,
+            question=record.question[len(record.question)-1].content,
+            max=record.question[len(record.question)-1].number,
+            question_id=record.question[len(record.question)-1].id
         )
         return schema
 

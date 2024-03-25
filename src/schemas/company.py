@@ -1,3 +1,5 @@
+from typing import Dict, List, Any
+
 from pydantic import BaseModel
 
 class CompanySchema(BaseModel):
@@ -10,3 +12,6 @@ class CompanyMessageSchema(BaseModel):
     name: str
     message: str
     channel_access_token: str | None
+    question: List[Dict[str,Any]]
+    max: int
+    question_id: int

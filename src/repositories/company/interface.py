@@ -27,8 +27,8 @@ class CompanyRepository(Module):
         print("MySQlに応募者の情報を登録しました")
         return self.repository.update_message(company_id, message_id)
 
-    def find_by_line_user_id(self, line_id: str) -> CompanyMessageSchema:
-        return self.repository.find_by_line_id(line_id)
+    async def find_by_line_user_id(self, line_id: str) -> CompanyMessageSchema:
+        return await self.repository.find_by_line_id(line_id)
 class CompanyRepositoryModule(Module):
     def configure(self, binder):
         # binder.bind(AbstractNotify, to=SlackNotification)

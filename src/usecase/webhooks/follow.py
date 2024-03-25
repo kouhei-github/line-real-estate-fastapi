@@ -4,18 +4,15 @@ from repositories.company.interface import CompanyRepositoryModule, CompanyRepos
 from injector import Injector
 from services.line_bot.core import CoreLineBot
 from services.line_bot.message.text_message import TextMessage
-from services.line_bot.message.quick_reply_message import QuickReplyMessage
+from services.line_bot.message.quick_reply_postback_message import QuickReplyPostMessage
 
 async def follow_use_case(body: FollowWebHook) -> str:
     print(body)
 
-    print(f"body.destination: {body.destination}")
-
     # 会社
     company_injector = Injector([CompanyRepositoryModule()])
     company_repository = company_injector.get(CompanyRepository)
-    company = company_repository.find_by_line_user_id(body.destination)
-
+    company = await company_repository.find_by_line_user_id(body.destination)
     # line sdk
     bot = CoreLineBot(company.channel_access_token)
 
@@ -37,8 +34,15 @@ async def follow_use_case(body: FollowWebHook) -> str:
     message = TextMessage(company.message)
     bot.send_message(body.events[0].source.userId, message)
 
-    question = f"{user.name}さんの性別を選択してください"
-    quick_reply = QuickReplyMessage(question, [{"label": "男性", "text": "男性"},{"label": "女性", "text": "女性"}])
-    bot.send_message(body.events[0].source.userId, quick_reply)
+    # 1つめの質問
+    question = f"{user.name}さんの"
+    if company.question[0]["type"] == "quickreply":
+        question += company.question[0]["question"]
+        items = [{"label": answer, "text": answer+"-1"} for answer in company.question[0]["answer"]]
+        quick_reply_message = QuickReplyPostMessage(question, items)
+        bot.send_message(body.events[0].source.userId, quick_reply_message)
+    else:
+        text_message = TextMessage(question+company.question[0]["question"])
+        bot.send_message(body.events[0].source.userId, text_message)
 
     return body.events[0].source.userId

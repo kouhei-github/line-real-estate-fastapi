@@ -18,6 +18,7 @@ class User(Base):
     picture_url = Column(String(250))
     follow = Column(Boolean, default=True)
     companies = relationship("Company", secondary=association_table, back_populates="users")
+    answer = relationship("Answer", back_populates="user")
 
 class Company(Base):
     __tablename__ = 'companies'
@@ -29,3 +30,4 @@ class Company(Base):
     message_id = Column(Integer, ForeignKey('messages.id'), nullable=True)
     message = relationship("Message", back_populates="companies")
     users = relationship("User", secondary=association_table, back_populates="companies")
+    question = relationship("Question", back_populates="company")
