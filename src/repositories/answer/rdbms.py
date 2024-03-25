@@ -44,7 +44,16 @@ class AnswerRDBMS(AbstractAnswerDatabase):
 
         self.db.commit()
         self.db.refresh(answer)
-        return AnswerNumSchema(current_num=answer.number)
+        return AnswerNumSchema(current_num=answer.number, is_finish=answer.is_finish)
+
+    async def finish(self, question_id: int, user_id: str):
+        user = self.db.query(User).filter(User.line_user_id == user_id).first()
+
+        answer = self.db.query(Answer).filter(Answer.user_id == user.id).filter(
+            Answer.question_id == question_id).first()
+        answer.is_finish = True
+        self.db.commit()
+        self.db.refresh(answer)
 
     async def find_by_question_id_and_line_user_id(self, question_id: int, user_id: str):
         user = self.db.query(User).filter(User.line_user_id == user_id).first()
@@ -52,4 +61,4 @@ class AnswerRDBMS(AbstractAnswerDatabase):
         answer = self.db.query(Answer).filter(Answer.user_id == user.id).filter(
             Answer.question_id == question_id).first()
 
-        return AnswerNumSchema(current_num=answer.number)
+        return AnswerNumSchema(current_num=answer.number, is_finish=answer.is_finish)

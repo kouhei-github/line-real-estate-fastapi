@@ -8,6 +8,7 @@ class AnswerSchema(BaseModel):
 
 class AnswerNumSchema(BaseModel):
     current_num: int
+    is_finish: bool
 
 class AnswerBackSchema(BaseModel):
     question_id: int

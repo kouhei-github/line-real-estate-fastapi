@@ -26,6 +26,15 @@ async def text_message(body: MessageTextWebHook) -> str:
     if body.events[0].message.text == "はい":
         # 次の質問に行く
         if answer.current_num == company.max:
+            if answer.is_finish: return ""
+            question = "最終確認です。以下でよろしいでしょうか？"
+            items = [{"label": "はい", "text": "はい"}, {"label": "いいえ", "text": "いいえ"}]
+            quick_reply_message = QuickReplyMessage(question, items)
+            bot.send_message(body.events[0].source.userId, quick_reply_message)
+
+            # 自動応答を終了させる
+            await answer_repository.finish(company.question_id, body.events[0].source.userId)
+
             return ""
         question = f"{profile.display_name}さんの"
         if company.question[int(answer.current_num)]["type"] == "quickreply":
@@ -37,6 +46,7 @@ async def text_message(body: MessageTextWebHook) -> str:
         else:
             text_message = TextMessage(question + company.question[int(answer.current_num)]["question"])
             bot.send_message(body.events[0].source.userId, text_message)
+
         return ""
     elif body.events[0].message.text == "いいえ":
         question = f"{profile.display_name}さんの"

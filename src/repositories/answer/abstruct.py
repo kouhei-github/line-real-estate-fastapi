@@ -13,3 +13,7 @@ class AbstractAnswerDatabase(ABC):
     @abstractmethod
     def find_by_question_id_and_line_user_id(self, question_id: int, user_id: str) -> AnswerNumSchema:
         raise NotImplementedError()
+
+    @abstractmethod
+    def finish(self, question_id: int, user_id: str):
+        raise NotImplementedError()

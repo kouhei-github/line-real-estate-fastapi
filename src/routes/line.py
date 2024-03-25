@@ -38,4 +38,5 @@ async def create_user(data: Dict, db: Session = Depends(get_db)):
             await postback_use_case(body)
         case "message":
             await message_use_case(data)
+
     return {"status": 200}

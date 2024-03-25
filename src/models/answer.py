@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Column, ForeignKey, JSON, Text
+from sqlalchemy import Integer, Boolean, Column, ForeignKey, JSON, Text
 from sqlalchemy.orm import relationship
 from config.index import Base
 class Answer(Base):
@@ -7,6 +7,7 @@ class Answer(Base):
     id = Column(Integer, primary_key=True)
     content = Column(JSON)
     number = Column(Integer)
+    is_finish = Column(Boolean, default=False)
 
     question_id = Column(Integer, ForeignKey('questions.id'), nullable=True)
     question = relationship("Question", back_populates="answer")

@@ -24,6 +24,9 @@ class AnswerRepository(Module):
     async def back(self, question_id: int, user_id: str) -> AnswerNumSchema:
         return self.repository.rollback(question_id, user_id)
 
+    async def finish(self, question_id: int, user_id: str) -> AnswerNumSchema:
+        return self.repository.finish(question_id, user_id)
+
     async def find_by_question_id_and_line_user_id(self, question_id: int, line_user_id: str) -> AnswerNumSchema:
         return await self.repository.find_by_question_id_and_line_user_id(
             question_id, line_user_id
